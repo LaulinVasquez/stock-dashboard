@@ -1,5 +1,5 @@
 ## Overview
-
+![alt text](image.png)
 
 **Project Title**: 📈 Real-Time Stock Dashboard
 
