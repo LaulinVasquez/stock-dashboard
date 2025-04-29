@@ -79,15 +79,26 @@ if ticker:
         time.sleep(5)    
         status.empty()    
         # Chart 
-        fig.add_trace(
-            go.Scatter(
-                x=result["history"].index,
-                y=result["history"]["Close"],
-                mode="lines",
-                name=ticker,
-                line=dict(color="royalblue", width=1),
-                hovertemplate="<b>%{x}</b><br>Price: $ %{y:.2f}<extra></extra>")
-        )
+        if result["change_percent"] < 0:
+            fig.add_trace(
+                go.Scatter(
+                    x=result["history"].index,
+                    y=result["history"]["Close"],
+                    mode="lines",
+                    name=ticker,
+                    line=dict(color="red", width=1),
+                    hovertemplate="<b>%{x}</b><br>Price: $ %{y:.2f}<extra></extra>")
+            )
+        elif result["change_percent"] > 0:
+                        fig.add_trace(
+                go.Scatter(
+                    x=result["history"].index,
+                    y=result["history"]["Close"],
+                    mode="lines",
+                    name=ticker,
+                    line=dict(color="Green", width=1),
+                    hovertemplate="<b>%{x}</b><br>Price: $ %{y:.2f}<extra></extra>")
+            )
         fig.add_trace(
             go.Scatter(
                 x=result["history"].index,
