@@ -40,11 +40,12 @@ def get_stock_data(ticker, interval="1m"):
 # this where graph functionality will be
 fig = go.Figure()
 
-ticker = st.text_input("Enter stock ticker", value="MSFT")
-
+ticker = st.text_input("Enter stock ticker", value="MSFT,AAPL")
+tickers = [t.strip().upper() for t in ticker.split(",") if t.strip()]
+print(tickers[1])
 # backend data information
-for x in get_stock_data(ticker):
-    print(f"{x}: {get_stock_data(ticker)[x]}")
+# for x in get_stock_data(ticker):
+#     print(f"{x}: {get_stock_data(ticker)[x]}")
 
 
 interval = st.selectbox(
@@ -52,10 +53,25 @@ interval = st.selectbox(
     options=["1m", "2m", "5m", "15m", "30m", "60m", "90m", "1d", "1wk", "1mo"],
     index=0
 )
+for ticker in tickers:
+    data = yf.Ticker(ticker).history(period="1d", interval=interval)
+    if data.empty:
+        st.warning(f"No data for {ticker}")
+        continue
+
+    fig.add_trace(
+        go.Scatter(
+            x=data.index,
+            y=data["Close"],
+            mode="lines",
+            name=ticker
+        )
+    )
 if ticker:
     with st.spinner('Loading...'):
         time.sleep(1)        
     result = get_stock_data(ticker, interval)
+
     
     if "error" in result:
         st.error(result["error"])
@@ -70,35 +86,16 @@ if ticker:
             st.metric("volume", f"{result["volume"]:,}", f"Avg: {result["avg_volume"]:,}")
         with col3:
             st.metric("price Change", f"{result["change_percent"]:.2f}%", delta_color="inverse")
-            
+        
         status = st.empty()
         if result["change"] > 0:
-            status.success("📈 Gainer")
+            status.success(f"{result["Name"]} is gaining today! 📈")
         elif result["change"] < 0:
-            status.error("📉 Loser")
+            status.error(f"{result["Name"]} is losing today 📉 Loser")
         time.sleep(5)    
         status.empty()    
         # Chart 
-        if result["change_percent"] < 0:
-            fig.add_trace(
-                go.Scatter(
-                    x=result["history"].index,
-                    y=result["history"]["Close"],
-                    mode="lines",
-                    name=ticker,
-                    line=dict(color="red", width=1),
-                    hovertemplate="<b>%{x}</b><br>Price: $ %{y:.2f}<extra></extra>")
-            )
-        elif result["change_percent"] > 0:
-                        fig.add_trace(
-                go.Scatter(
-                    x=result["history"].index,
-                    y=result["history"]["Close"],
-                    mode="lines",
-                    name=ticker,
-                    line=dict(color="Green", width=1),
-                    hovertemplate="<b>%{x}</b><br>Price: $ %{y:.2f}<extra></extra>")
-            )
+
         fig.add_trace(
             go.Scatter(
                 x=result["history"].index,
@@ -107,6 +104,7 @@ if ticker:
                 name="5-min SMA",
                 line=dict(color="orange", width=2, dash="dash"))
         )
+        
         fig.update_layout(
             title=f"{result['Name']} Price Movement ({interval})",
             xaxis_title="Date",
@@ -118,4 +116,4 @@ if ticker:
         
 if result["volume"] and result["avg_volume"]:
     if result["volume"] > result["avg_volume"] * 1.5:
-        st.warning("⚠️ Abnormally high trading volume!")       
+        st.warning("⚠️ Abnormally high trading volume!")
