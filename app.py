@@ -9,32 +9,41 @@ import time
 st.title("Stock Market Analysis App")
 
 # Get stock data from Yahoo Finance
+@st.cache_data(ttl=300)  # Cache data for 5 minutes
 def get_stock_data(ticker, interval="1m"):
+    try:
+        stock = yf.Ticker(ticker)
+        
+        # Try to fetch stock data
+        data = stock.history(period="1d", interval=interval)
+        if data.empty:
+            return {"error": "No data found. Market might be closed."}
+
+        data["SMA_5"] = data["Close"].rolling(window=5).mean()
+        info = stock.info
+        
+        latest_price = data["Close"].iloc[-1]
+        open_price = data["Open"].iloc[0]
+        change = ((latest_price - open_price) / open_price) * 100
+        
+        return {
+            "Name": info.get("longName", "N/A"),
+            "price": latest_price,
+            "open": open_price,
+            "change_percent": round(change, 2),
+            "volume": info.get("volume", "N/A"),
+            "avg_volume": info.get("averageVolume", "N/A"),
+            "longBusinessSummary": info.get("longBusinessSummary", "N/A"),
+            "change": change,
+            "history": data,
+        }
     
-    stock = yf.Ticker(ticker)
+    except yf.exceptions.YFRateLimitError:
+        return {"error": "Rate limit reached. Please try again in a few minutes."}
     
-    # get historical market data
-    data = stock.history(period="1d", interval=interval)
-    data["SMA_5"] = data["Close"].rolling(window=5).mean()
-    info = stock.info
-    
-    if data.empty:
-        return{"error": "No data found. Market migh be closed"}
-    
-    latest_price = data["Close"].iloc[-1]
-    open_price = data["Open"].iloc[0]
-    change = ((latest_price - open_price) / open_price) * 100
-    return {
-        "Name": info.get("longName", "N/A"),
-        "price": latest_price,
-        "open": open_price,
-        "change_percent": round(change,2),
-        "volume": info.get("averageVolume", "N/A"),
-        "avg_volume": info.get("averageVolume"),
-        "longBusinessSummary": info.get("longBusinessSummary", "N/A"),
-        "change": change,
-        "history": data,
-    }
+    except Exception as e:
+        return {"error": f"Failed to fetch data: {str(e)}"}
+
 
 
 # this where graph functionality will be
@@ -117,3 +126,5 @@ if ticker:
 if result["volume"] and result["avg_volume"]:
     if result["volume"] > result["avg_volume"] * 1.5:
         st.warning("⚠️ Abnormally high trading volume!")
+        
+        
