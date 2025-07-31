@@ -61,3 +61,6 @@ The following items I plan to fix, improve, and/or add to this project in the fu
 * [Enable dark mode toggle ]
 * [Deploy the app to Streamlit Cloud or HuggingFace Spaces ]
 
+## 🪪 License
+
+This project is licensed under the [CC0 1.0 Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/).
