@@ -1,6 +1,8 @@
 ## Overview
 ![alt text](image.png)
 
+## proper link:
+- https://stock-dashboard-juz4at5enzs6k4gwsi3yxp.streamlit.app/
 **Project Title**: 📈 Real-Time Stock Dashboard
 
 **Project Description**: A lightweight Streamlit app that displays real-time stock data using the yfinance library. It allows users to enter any stock ticker (e.g. AAPL, TSLA, MSFT) and view:
