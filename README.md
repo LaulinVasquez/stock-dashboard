@@ -1,5 +1,5 @@
 ## Overview
-![alt text](image.png)
+![alt text](example.png)
 
 ## proper link:
 - https://stock-dashboard-juz4at5enzs6k4gwsi3yxp.streamlit.app/
@@ -26,8 +26,9 @@ Steps to build and/or run the software:
 
 1. clone the repo: git clone https://github.com/your-username/stock-market-dashboard.git cd stock-market-dashboard
 2. create a virtual enviroment: python3 -m venv venv source venv/bin/activate 
-3. install dependecies: pip install -r requirements.txt
-4. run the app
+3. streamlit run app.py
+4. install dependecies: pip install -r requirements.txt
+5. run the app
 
 Instructions for using the software:
 
