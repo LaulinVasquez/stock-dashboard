@@ -1,5 +1,5 @@
 ## Overview
-![alt text](example.png)
+![alt text](app_layout.png)
 
 ## proper link:
 - https://stock-dashboard-juz4at5enzs6k4gwsi3yxp.streamlit.app/
